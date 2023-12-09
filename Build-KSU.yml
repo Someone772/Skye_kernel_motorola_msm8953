@@ -45,8 +45,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
-          repository: Someone/android_kernel_motorola_msm8998
-          ref: Retrofit-A13-BoostKernel
+          repository: Someone772/skye_kernel_motorola_msm8998
+          ref: 12.1
           path: kernel-source
           
       - name: Checkout Anykernel
