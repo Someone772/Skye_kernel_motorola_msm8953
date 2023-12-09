@@ -1,4 +1,4 @@
-name: Build KernelSU
+name: Build Kernel
 on:
   push:
     branches: ["12.1"]
@@ -10,7 +10,7 @@ jobs:
       matrix:
         device: [ali]
         
-    name: Build KernelSU-${{ matrix.device }}
+    name: Build Kernel-${{ matrix.device }}
     runs-on: ubuntu-latest
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
-          repository: Someone772/skye_kernel_motorola_msm8998
+          repository: Someone772/skye_kernel_motorola_msm8953
           ref: 12.1
           path: kernel-source
           
@@ -73,7 +73,7 @@ jobs:
       - name: Setup Ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: Build-KernelSU-${{ matrix.device }}
+          key: Build-Kernel-${{ matrix.device }}
           save: ${{ github.event_name != 'pull_request' }}
           max-size: 2G
           
@@ -96,17 +96,17 @@ jobs:
           echo "Building kernel with $args"  
           make O=out LLVM=1 LLVM_IAS=1 CC="ccache clang" lineageos_${{ matrix.device }}_defconfig && make O=out LLVM=1 LLVM_IAS=1 CC="ccache clang" -j$(grep -c ^processor /proc/cpuinfo)
           
-      - name: Upload KernelSU-${{ matrix.device }}
+      - name: Upload Kernel-${{ matrix.device }}
         uses: actions/upload-artifact@v3
         with:
-          name: KernelSU-${{ matrix.device }}
+          name: Kernel-${{ matrix.device }}
           path: kernel-source/out/arch/arm64/boot/*
           
       - name: Prepare Anykernel
         working-directory: anykernel
         run: |
           cp -f $GITHUB_WORKSPACE/kernel-source/out/arch/arm64/boot/Image.gz-dtb .
-          ZIP_NAME="KernelSU-v-${{ env.KSU_VERSION }}-${{ matrix.device }}-${{ env.date }}"
+          ZIP_NAME="Kernel-v-${{ env.KSU_VERSION }}-${{ matrix.device }}-${{ env.date }}"
           echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
           zip -r "$ZIP_NAME.zip" *
           mv "$ZIP_NAME.zip" $GITHUB_WORKSPACE
